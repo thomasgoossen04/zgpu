@@ -4,7 +4,9 @@
 // It supports Windows 10+ (DirectX 12), macOS 12+ (Metal) and Linux (Vulkan).
 //
 // https://github.com/michal-z/zig-gamedev/tree/main/libs/zgpu
-//--------------------------------------------------------------------------------------------------
+//-------------------------------------------------------------------------------------------------
+//
+// Forked to expose the Power preference in GraphicsContextOptions
 const std = @import("std");
 const math = std.math;
 const assert = std.debug.assert;
@@ -74,6 +76,7 @@ pub const GraphicsContextOptions = struct {
     present_mode: wgpu.PresentMode = .fifo,
     required_features: []const wgpu.FeatureName = &.{},
     required_limits: ?*const wgpu.RequiredLimits = null,
+    power_preference: wgpu.PowerPreference = .high_performance,
 };
 
 pub const GraphicsContext = struct {
@@ -148,7 +151,7 @@ pub const GraphicsContext = struct {
 
             var response = Response{};
             instance.requestAdapter(
-                .{ .power_preference = .high_performance },
+                .{ .power_preference = options.power_preference },
                 callback,
                 @ptrCast(&response),
             );
