@@ -1639,6 +1639,12 @@ fn isLinuxDesktopLike(tag: std.Target.Os.Tag) bool {
     };
 }
 
+// Old kernel32 wrapper which was removed
+// in zig 0.16
+pub extern "kernel32" fn GetModuleHandleW(
+    lpModuleName: ?std.os.windows.LPCWSTR,
+) callconv(.winapi) ?std.os.windows.HMODULE;
+
 fn createSurfaceForWindow(instance: wgpu.Instance, window_provider: WindowProvider) wgpu.Surface {
     const os_tag = @import("builtin").target.os.tag;
 
@@ -1646,7 +1652,7 @@ fn createSurfaceForWindow(instance: wgpu.Instance, window_provider: WindowProvid
         .windows => SurfaceDescriptor{
             .windows_hwnd = .{
                 .label = "basic surface",
-                .hinstance = std.os.windows.kernel32.GetModuleHandleW(null).?,
+                .hinstance = GetModuleHandleW(null).?,
                 .hwnd = window_provider.getWin32Window().?,
             },
         },
